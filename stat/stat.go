@@ -2,6 +2,7 @@ package stat
 
 import (
 	"fmt"
+	"os"
 	"os/exec"
 	"regexp"
 )
@@ -50,11 +51,11 @@ func (s *Stat) Check() string {
 	}
 	// kind of a hack.
 	result := s.regex.FindSubmatch(out)
-	// if dbg := os.Args[1]; dbg == "-d" {
-	// 	fmt.Printf("Matches for: %s\n", s.Pattern)
-	// 	for _, r := range result {
-	// 		fmt.Println(string(r))
-	// 	}
-	// }
+	if len(os.Args) > 1 && os.Args[1] == "-d" {
+		fmt.Printf("Matches for: %s\n", s.Pattern)
+		for _, r := range result {
+			fmt.Println(string(r))
+		}
+	}
 	return string(result[len(result)-1])
 }
