@@ -2,35 +2,35 @@ package main
 
 import (
 	"fmt"
+	"time"
 	"os/exec"
+
+	"github.com/cameron-wags/xstatusbar/stat"
 )
 
+var battery = stat.New(`\d+%`, "acpi")
+var volume = stat.New(`Volume:.*\s(\d+%)`, "pactl", "list", "sinks")
+var mute = stat.New(`Mute:\s(yes|no)`, "pactl", "list", "sinks")
+
 func main() {
-	fmt.Printf("%s\n%s\n", Volume(), Battery())
-}
-
-// Battery returns the current battery percentage.
-func Battery() string {
-	batt := cmdRun("acpi")
-	//TODO regex filter
-	return batt
-}
-
-// Volume returns the current volume.
-// There might be an issue with discerning which output is active.
-func Volume() string {
-	volStr := cmdRun("pactl", "list", "sinks")
-	//TODO regex filter
-
-	return volStr
-}
-
-func cmdRun(bin string, arg ...string) string {
-	out, err := exec.Command(bin, arg...).Output()
-	if err != nil {
-		fmt.Println(err)
-		// TODO maybe handle
+	b := battery.Check()
+	m := mute.Check()
+	var v string
+	if m == "yes" {
+		v = "MUTE"
+	} else {
+		v = volume.Check()
 	}
 
-	return string(out)
+	Update(fmt.Sprintf("%s    Batt: %s    Vol: %s", timeFmt(), b, v))
+}
+
+// Update sends a string to xsetroot -name.
+func Update(name string) {
+	//TODO maybe care about the error
+	_ = exec.Command("xsetroot", "-name" , name).Run()
+}
+
+func timeFmt() string {
+	return time.Now().Format("2006-01-02 15:04")
 }
