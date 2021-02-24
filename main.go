@@ -2,35 +2,43 @@ package main
 
 import (
 	"fmt"
-	"time"
 	"os/exec"
 
+	"github.com/cameron-wags/xstatusbar/component"
 	"github.com/cameron-wags/xstatusbar/stat"
+	"github.com/cameron-wags/xstatusbar/stat/cmd"
 )
 
-var battery = stat.New(`\d+%`, "acpi")
-var volume = stat.New(`Volume:.*\s(\d+%)`, "pactl", "list", "sinks")
-var mute = stat.New(`Mute:\s(yes|no)`, "pactl", "list", "sinks")
+var clock = component.NewClock("2006-01-02 15:04")
+var battery = cmd.New("Batt", `\d+%`, "acpi")
+var backlight = component.NewBrightness()
+var volume = cmd.New("Vol", `Playback.*\[(\d+%)\]`, "amixer", "get", "Master")
+var mute = cmd.New("Vol", `\[(on|off)\]`, "amixer", "get", "Master")
+
+// Example
+// var statList = []stat.Statiface{
+// 	stat.NewCmd("Batt", `\d+%`, "acpi"),
+// }
 
 func main() {
-	b := battery.Check()
+	//TODO unhack volume with a composite stat
 	m := mute.Check()
 	var v string
-	if m == "yes" {
+	if m == "off" {
 		v = "MUTE"
 	} else {
 		v = volume.Check()
 	}
 
-	Update(fmt.Sprintf("%s    Batt: %s    Vol: %s", timeFmt(), b, v))
+	Update(fmt.Sprintf("%s    %s    %s    Vol: %s",
+		stat.Format(clock),
+		stat.Format(battery),
+		stat.Format(backlight),
+		v))
 }
 
 // Update sends a string to xsetroot -name.
 func Update(name string) {
 	//TODO maybe care about the error
-	_ = exec.Command("xsetroot", "-name" , name).Run()
-}
-
-func timeFmt() string {
-	return time.Now().Format("2006-01-02 15:04")
+	_ = exec.Command("xsetroot", "-name", name).Run()
 }

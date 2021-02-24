@@ -1,4 +1,4 @@
-package stat
+package cmd
 
 import (
 	"fmt"
@@ -7,8 +7,11 @@ import (
 	"regexp"
 )
 
-// Stat defines
-type Stat struct {
+// Cmd defines a single metric that can be checked with a command.
+type Cmd struct {
+	// Name is associated with the stat when formatted.
+	Name string
+
 	// Command gets results containing the stat.
 	Command string
 
@@ -19,28 +22,33 @@ type Stat struct {
 	// Submatches are allowed but only one. The last submatch hit will be returned.
 	Pattern string
 
-	// regex is set automatically.
 	regex *regexp.Regexp
 }
 
-// New makes a Stat with the settings provided.
-func New(pattern string, command string, args ...string) Stat {
-	return Stat{
+// New makes a Cmd Stat with the settings provided.
+func New(name string, pattern string, command string, args ...string) *Cmd {
+	return &Cmd{
+		Name:    name,
 		Command: command,
 		Args:    args,
 		Pattern: pattern,
 	}
 }
 
-// NewBuild makes a Stat like stat.New() and compiles its regular expression.
-func NewBuild(pattern string, command string, args ...string) Stat {
-	s := New(pattern, command, args...)
+// NewBuild makes a Cmd Stat like cmd.New() and compiles its regular expression.
+func NewBuild(name string, pattern string, command string, args ...string) *Cmd {
+	s := NewBuild(name, pattern, command, args...)
 	s.regex = regexp.MustCompile(s.Pattern)
 	return s
 }
 
+// Title returns the title associated with a stat.
+func (s *Cmd) Title() string {
+	return s.Name
+}
+
 // Check returns the string value of a stat.
-func (s *Stat) Check() string {
+func (s *Cmd) Check() string {
 	if s.regex == nil {
 		s.regex = regexp.MustCompile(s.Pattern)
 	}
