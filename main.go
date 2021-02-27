@@ -1,40 +1,35 @@
 package main
 
 import (
-	"fmt"
 	"os/exec"
+	"strings"
 
 	"github.com/cameron-wags/xstatusbar/component"
 	"github.com/cameron-wags/xstatusbar/stat"
 	"github.com/cameron-wags/xstatusbar/stat/cmd"
 )
 
-var clock = component.NewClock("2006-01-02 15:04")
-var battery = cmd.New("Batt", `\d+%`, "acpi")
-var backlight = component.NewBrightness()
-var volume = cmd.New("Vol", `Playback.*\[(\d+%)\]`, "amixer", "get", "Master")
-var mute = cmd.New("Vol", `\[(on|off)\]`, "amixer", "get", "Master")
+var padding = "    "
 
-// Example
-// var statList = []stat.Statiface{
-// 	stat.NewCmd("Batt", `\d+%`, "acpi"),
-// }
+// Statistics in the status bar in display order.
+var components = []stat.Statiface{
+	component.NewClock("2006-01-02 15:04"),
+	cmd.New("Batt", `Battery.*\s(\d+%)`, "acpi"),
+	component.NewBrightness(),
+	component.NewVolume(),
+}
 
 func main() {
-	//TODO unhack volume with a composite stat
-	m := mute.Check()
-	var v string
-	if m == "off" {
-		v = "MUTE"
-	} else {
-		v = volume.Check()
+	statusBar := strings.Builder{}
+	stopPadding := len(components) - 1
+	for index, part := range components {
+		// Ignore errors because we're useless..
+		statusBar.WriteString(stat.Format(part))
+		if index != stopPadding {
+			statusBar.WriteString(padding)
+		}
 	}
-
-	Update(fmt.Sprintf("%s    %s    %s    Vol: %s",
-		stat.Format(clock),
-		stat.Format(battery),
-		stat.Format(backlight),
-		v))
+	Update(statusBar.String())
 }
 
 // Update sends a string to xsetroot -name.

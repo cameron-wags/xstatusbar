@@ -38,8 +38,14 @@ func New(name string, pattern string, command string, args ...string) *Cmd {
 // NewBuild makes a Cmd Stat like cmd.New() and compiles its regular expression.
 func NewBuild(name string, pattern string, command string, args ...string) *Cmd {
 	s := NewBuild(name, pattern, command, args...)
-	s.regex = regexp.MustCompile(s.Pattern)
+	s.ensureRegex()
 	return s
+}
+
+func (s *Cmd) ensureRegex() {
+	if s.regex == nil {
+		s.regex = regexp.MustCompile(s.Pattern)
+	}
 }
 
 // Title returns the title associated with a stat.
@@ -49,9 +55,7 @@ func (s *Cmd) Title() string {
 
 // Check returns the string value of a stat.
 func (s *Cmd) Check() string {
-	if s.regex == nil {
-		s.regex = regexp.MustCompile(s.Pattern)
-	}
+	s.ensureRegex()
 	out, err := exec.Command(s.Command, s.Args...).Output()
 	if err != nil {
 		fmt.Println(err)
