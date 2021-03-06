@@ -1,8 +1,11 @@
 package main
 
 import (
+	"fmt"
+	"os"
 	"os/exec"
 	"strings"
+	"time"
 
 	"github.com/cameron-wags/xstatusbar/component"
 	"github.com/cameron-wags/xstatusbar/stat"
@@ -31,6 +34,17 @@ func main() {
 		}
 	}
 	Update(statusBar.String())
+
+	// -t flag prints remaining seconds before the clock time goes stale.
+	// Sets up for a handy refresh script in ~/.xinitrc 
+	// Bash example: 
+	// while true: do
+	//     sleepTime=$(xstatusbar -t)
+	//     sleep $sleepTime
+	// done &
+	if len(os.Args) > 1 && os.Args[1] == "-t" {
+		fmt.Fprintln(os.Stdout, 60 - time.Now().Second())
+	}
 }
 
 // Update sends a string to xsetroot -name.
