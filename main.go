@@ -16,6 +16,7 @@ var padding = "    "
 
 // Statistics in the status bar in display order.
 var components = []stat.Statiface{
+	component.NewSleep("CAFFEINE"),
 	component.NewClock("2006-01-02 15:04"),
 	cmd.New("Batt", `Battery.*\s(\d+%)`, "acpi"),
 	component.NewBrightness(),
@@ -36,14 +37,14 @@ func main() {
 	Update(statusBar.String())
 
 	// -t flag prints remaining seconds before the clock time goes stale.
-	// Sets up for a handy refresh script in ~/.xinitrc 
-	// Bash example: 
+	// Sets up for a handy refresh script in ~/.xinitrc
+	// Bash example:
 	// while true: do
 	//     sleepTime=$(xstatusbar -t)
 	//     sleep $sleepTime
 	// done &
 	if len(os.Args) > 1 && os.Args[1] == "-t" {
-		fmt.Fprintln(os.Stdout, 60 - time.Now().Second())
+		fmt.Fprintln(os.Stdout, 60-time.Now().Second())
 	}
 }
 
