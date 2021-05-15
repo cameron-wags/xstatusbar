@@ -14,16 +14,20 @@ var maxBrightness = fmt.Sprintf("%s/%s/max_brightness", backlightPath, backlight
 var actualBrightness = fmt.Sprintf("%s/%s/actual_brightness", backlightPath, backlightDevice)
 
 // Brightness tracks backlight brightness
-type Brightness struct{}
+type Brightness struct {
+	title string
+}
 
 // NewBrightness returns a Brightness stat.
-func NewBrightness() *Brightness {
-	return &Brightness{}
+func NewBrightness(title string) *Brightness {
+	return &Brightness{
+		title: title,
+	}
 }
 
 // Title implements statiface
 func (b *Brightness) Title() string {
-	return "Backlight"
+	return b.title
 }
 
 // Check implements statiface

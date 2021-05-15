@@ -18,9 +18,9 @@ var padding = "    "
 var components = []stat.Statiface{
 	component.NewSleep("CAFFEINE"),
 	component.NewClock("2006-01-02 15:04"),
-	cmd.New("Batt", `Battery.*\s(\d+%)`, "acpi"),
-	component.NewBrightness(),
-	component.NewVolume(),
+	cmd.New("Bat", `Battery.*\s(\d+%)`, "acpi"),
+	component.NewBrightness("Backlight"),
+	component.NewVolume("Vol"),
 	cmd.New("WiFi", `(connected|connecting|disconnected)`, "nmcli", "g"),
 }
 

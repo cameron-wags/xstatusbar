@@ -8,20 +8,22 @@ import (
 type Volume struct {
 	muteStat   cmd.Cmd
 	volumeStat cmd.Cmd
+	title      string
 }
 
 // NewVolume creates a new volume stat.
-func NewVolume() *Volume {
+func NewVolume(title string) *Volume {
 	return &Volume{
 		// I'm still too lazy to make this one expression.
 		volumeStat: *cmd.New("Vol", `Volume:.*\s(\d+%)`, "pactl", "list", "sinks"),
 		muteStat:   *cmd.New("Vol", `Mute:\s+(yes|no)`, "pactl", "list", "sinks"),
+		title:      title,
 	}
 }
 
 // Title implements statiface.
 func (v *Volume) Title() string {
-	return "Vol"
+	return v.title
 }
 
 // Check implements statiface.
