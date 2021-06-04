@@ -21,9 +21,7 @@ var components = []stat.Statiface{
 	cmd.New("Bat", `Battery.*\s(\d+%)`, "acpi"),
 	component.NewBrightness("Backlight"),
 	component.NewVolume("Vol"),
-        // NetworkManager
-	// cmd.New("WiFi", `(connected|connecting|disconnected)`, "nmcli", "g"),
-	cmd.New("WiFi", `(connected|disconnected)`, "iwctl", "station", "list"),
+	component.NewWifi("WiFi", "wlan0"),
 }
 
 func main() {
