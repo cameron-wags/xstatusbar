@@ -1,5 +1,5 @@
 pkgname=xstatusbar
-pkgver=1.1.0
+pkgver=1.1.1
 pkgrel=1
 epoch=
 pkgdesc="CLI tool which manages packages from the Arch User Repository & other git repos."
