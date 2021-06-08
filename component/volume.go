@@ -31,7 +31,7 @@ func (v *Volume) Check() string {
 	mute := v.muteStat.Check()
 	var value string
 	if mute == "yes" {
-		value = "MUTE"
+		value = "mute"
 	} else {
 		value = v.volumeStat.Check()
 	}
