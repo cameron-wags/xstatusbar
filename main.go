@@ -17,11 +17,11 @@ var padding = "    "
 // Statistics in the status bar in display order.
 var components = []stat.Statiface{
 	component.NewSleep("CAFFEINE"),
-	component.NewClock("2006-01-02 15:04"),
-	cmd.New("Bat", `Battery.*\s(\d+%)`, "acpi"),
+	component.NewWifi("WiFi", "wlan0"),
 	component.NewBrightness("Backlight"),
 	component.NewVolume("Vol"),
-	component.NewWifi("WiFi", "wlan0"),
+	cmd.New("Bat", `Battery.*\s(\d+%)`, "acpi"),
+	component.NewClock("2006-01-02 15:04"),
 }
 
 func main() {
